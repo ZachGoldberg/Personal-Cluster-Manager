@@ -17,6 +17,16 @@ class Tunnel(object):
         self.keyfile = keyfile
         Tunnel.add_tunnel(self)
 
+    @classmethod
+    def get_tunnel(clazz, tunnelport, user=None, keyfile=None):
+        result = db.store.find(Tunnel,
+                               Tunnel.port == tunnelport,
+                               Tunnel.user == user,
+                               Tunnel.keyfile == keyfile)[0]
+        if not result:
+            return Tunnel(tunnelport, user, keyfile)
+
+        return result
 
     @classmethod
     def add_tunnel(clazz, tunnel):
