@@ -1,11 +1,10 @@
-import sys, os, getpass
+import os, getpass
 from contextlib import contextmanager
 from storm.locals import *
 
 from common import die
 
 DB_LOC = "/var/lib/kinecktor/db.sqlite3"
-
 
 class Database(object):
     def __init__(self):

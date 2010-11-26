@@ -1,5 +1,3 @@
-import sys
-
 from common.database import db
 from common import *
 from models import Host

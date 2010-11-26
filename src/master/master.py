@@ -7,6 +7,8 @@ if __name__ == "__main__":
     if len(args) < 2:
         die("Usage: %s command commandargs" % args[0])
 
+    lookup_id()
+
     command = args[1]
     try:
         module = __import__("commands.%s" % command,
