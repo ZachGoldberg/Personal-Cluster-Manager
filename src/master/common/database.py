@@ -52,11 +52,25 @@ class Database(object):
             pass
         
         self.__init_store()
+        
+        # Let others write to the DB... remember we're assuming
+        # that we trust these clients, so this is OK.
+        os.chmod(DB_LOC, 0666)
+        os.chmod(os.path.dirname(DB_LOC), 0777)
         with self.transaction():
             self.__create_table("host", [
                     "id INTEGER PRIMARY KEY",
                     "name VARCHAR",
                     "uniquetoken VARCHAR"
+                    ])
+            self.__create_table("availability_record", [
+                    "id INTEGER PRIMARY KEY",
+                    "hostid INTEGER",
+                    "hostip VARCHAR",
+                    "hostport INTEGER",
+                    "masterip VARCHAR",
+                    "masterport INTEGER",
+                    "timestamp DATETIME"
                     ])
 
 db = Database()
