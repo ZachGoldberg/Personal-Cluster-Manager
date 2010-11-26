@@ -50,3 +50,11 @@
         as necessary
       Admin gives client credneitlas to login to master.  Client connects
         to master, registers itself remotely and starts.
+
+
+    Wouldn't it be nice if the master could have some kind of plugin interface?
+      Perhaps a screen plugin, which would be aware of running screen sessions
+      on the client and provide easy access to them
+
+      Perhaps a unison file sychroniser plugin which manages a unison setup
+      and automagically keeps some folders in sync on all machines
