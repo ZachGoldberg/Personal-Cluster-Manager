@@ -12,6 +12,9 @@ class Host(object):
         self.uniquetoken = unicode(uniquetoken)
         Host.add_host(self)
            
+    def __str__(self):
+        return "%s (%s)" % (self.name, self.uniquetoken)
+        
     @classmethod
     def add_host(clazz, host):
         with db.transaction():

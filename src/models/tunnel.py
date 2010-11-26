@@ -18,6 +18,10 @@ class Tunnel(object):
         self.keyfile = unicode(keyfile)
         Tunnel.add_tunnel(self)
 
+
+    def __str__(self):
+        return "%s@localhost:%s (%s)" % (self.user, self.port, self.keyfile)
+
     @classmethod
     def get_tunnel(clazz, tunnelport, user=None, keyfile=None):
         result = db.store.find(Tunnel,

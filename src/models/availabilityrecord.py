@@ -15,7 +15,8 @@ class AvailabilityRecord(object):
     tunnelid = Int()
     tunnelavailable = Int()
     timestamp = DateTime()
-    
+    tunnel = None
+
     def __init__(self, host, hostip, hostport,
                  masterip, masterport, 
                  tunnelid, tunnelavailable, timestamp,
@@ -40,6 +41,10 @@ class AvailabilityRecord(object):
 
 
     def __str__(self):
+        if not self.tunnel:
+            from models import Tunnel
+            self.tunnel = db.store.get(Tunnel, self.tunnelid)
+
         return "%s:%s -> %s:%s -R port %s, Available: %s" % (
             self.hostip,
             self.hostport,
