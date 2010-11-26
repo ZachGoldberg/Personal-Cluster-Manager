@@ -14,15 +14,16 @@ class Tunnel(object):
     def __init__(self, tunnelport, user=None, keyfile=None):
         self.port = tunnelport
         self.user = user or getpass.getuser()
-        self.keyfile = keyfile
+        self.user = unicode(self.user)
+        self.keyfile = unicode(keyfile)
         Tunnel.add_tunnel(self)
 
     @classmethod
     def get_tunnel(clazz, tunnelport, user=None, keyfile=None):
         result = db.store.find(Tunnel,
                                Tunnel.port == tunnelport,
-                               Tunnel.user == user,
-                               Tunnel.keyfile == keyfile)
+                               Tunnel.user == unicode(user),
+                               Tunnel.keyfile == unicode(keyfile))
 
         if result.count() == 0:
             return Tunnel(tunnelport, user, keyfile)

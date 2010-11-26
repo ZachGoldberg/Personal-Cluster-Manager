@@ -34,4 +34,5 @@ def identify(args):
     tunnel = Tunnel.get_tunnel(tunnelport, hostuser, privatekey)
 
     # Log that we saw this machine
-    AvailabilityRecord.register(host, tunnel)
+    record = AvailabilityRecord.register(host, tunnel)
+    succeed(record)
