@@ -1,0 +1,3 @@
+
+def addnode(args):
+    pass
