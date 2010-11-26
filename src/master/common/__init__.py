@@ -1,9 +1,17 @@
 import sys
 
-def die(msg):
+DEBUG = True
+
+def print_stats():
+    from common.database import db
+    sys.stderr.write("Commits: %s\n" % db.commit_count)
+
+def die(msg, code=1):
     sys.stderr.write("%s\n" % msg)
-    sys.exit(1)
+    if DEBUG:
+        print_stats()
+
+    sys.exit(code)
 
 def succeed(msg):
-    print msg
-    sys.exit(0)
+    die(msg, code=0)

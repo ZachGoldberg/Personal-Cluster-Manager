@@ -1,6 +1,6 @@
 import sys
 from common.database import db
-from common import die
+from common import *
 
 if __name__ == "__main__":
     args = sys.argv
@@ -17,4 +17,4 @@ if __name__ == "__main__":
 
     module.__dict__[command](args[2:])
 
-    print "Commits: %s" % db.commit_count
+    succeed()
