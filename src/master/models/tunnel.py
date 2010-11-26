@@ -47,6 +47,8 @@ class Tunnel(object):
                             key_filename=self.keyfile)
             else:
                 ssh.connect("127.0.0.1", username=self.user, port=self.port)
+            #TODO: Should confirm that the host we logged into is
+            # actually the host we were looking for.
             ssh.close()
             
             self.available = True
