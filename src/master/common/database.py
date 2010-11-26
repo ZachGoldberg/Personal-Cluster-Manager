@@ -1,11 +1,11 @@
 import sys, os, getpass
 from contextlib import contextmanager
-
 from storm.locals import *
+
+from common import die
 
 DB_LOC = "/var/lib/kinecktor/db.sqlite3"
 
-        
 
 class Database(object):
     def __init__(self):
@@ -14,9 +14,7 @@ class Database(object):
         # If not, try and create it as root.  If we're not root, bail out.
         if not os.path.exists(DB_LOC):
             if getpass.getuser() != "root":
-                sys.stderr.write(
-                    "Must be root the first time you run this app\n")
-                sys.exit(1)
+                die("Must be root the first time you run this app")
 
             self.__init_db()
         else:

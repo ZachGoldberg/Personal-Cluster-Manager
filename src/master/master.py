@@ -1,11 +1,11 @@
 import sys
 from common.database import db
+from common import die
 
 if __name__ == "__main__":
     args = sys.argv
     if len(args) < 2:
-        sys.stderr.write("Usage: %s command commandargs\n" % args[0])
-        sys.exit(1)
+        die("Usage: %s command commandargs" % args[0])
 
     command = args[1]
     try:
@@ -13,8 +13,7 @@ if __name__ == "__main__":
                             globals(), locals(), 
                             command)
     except ImportError:
-        sys.stderr.write("Invalid command: %s\n" % command)
-        sys.exit(1)
+        die("Invalid command: %s" % command)
 
     module.__dict__[command](args[2:])
 
