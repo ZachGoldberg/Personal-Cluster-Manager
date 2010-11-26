@@ -58,3 +58,9 @@
 
       Perhaps a unison file sychroniser plugin which manages a unison setup
       and automagically keeps some folders in sync on all machines
+
+
+    Dependencies: Storm, Paramiko
+    IDEA: Paramiko isn't really essential, its just cleaner than os.system(ssh)...
+    so on systems without paramiko we can implement a "fake paramiko" which just
+    makes openssh calls for things we need.
