@@ -1,5 +1,4 @@
-import getpass, paramiko
-
+import getpass, paramiko, simplejson, os
 from storm.locals import *
 
 from common.database import db
@@ -20,6 +19,12 @@ class Tunnel(object):
 
 
     def __str__(self):
+        if os.environ.get('PCM_AS_JSON'):
+            return simplejson.dumps({
+                    'user': self.user,
+                    'port': self.port,
+                    'keyfile': self.keyfile
+                    })
         return "%s@localhost:%s (%s)" % (self.user, self.port, self.keyfile)
 
     @classmethod

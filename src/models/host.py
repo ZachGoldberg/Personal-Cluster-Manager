@@ -1,3 +1,4 @@
+import os, simplejson
 from storm.locals import *
 
 from common.database import db
@@ -13,6 +14,12 @@ class Host(object):
         Host.add_host(self)
            
     def __str__(self):
+        if os.environ.get('PCM_AS_JSON'):
+            return simplejson.dumps({
+                    'name': self.name,
+                    'id': self.id,
+                    'uniquetoken': self.uniquetoken
+                    })
         return "%s (%s)" % (self.name, self.uniquetoken)
         
     @classmethod

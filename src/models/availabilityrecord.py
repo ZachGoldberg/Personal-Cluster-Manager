@@ -1,4 +1,4 @@
-import os
+import os, simplejson
 from datetime import datetime
 from storm.locals import *
 
@@ -44,7 +44,16 @@ class AvailabilityRecord(object):
         if not self.tunnel:
             from models import Tunnel
             self.tunnel = db.store.get(Tunnel, self.tunnelid)
-
+        if os.environ.get('PCM_AS_JSON'):
+            values = ['hostip', 'id', 'hostport', 
+                      'masterip', 'masterport',
+                      'tunnelavailable', 
+                      'timestamp']
+            data = dict(zip(values, [str(getattr(self, v)) for v in values]))
+            data['tunnelport'] = self.tunnel.port
+                       
+            return simplejson.dumps(data)
+                
         return "%s:%s -> %s:%s -R port %s, Available: %s" % (
             self.hostip,
             self.hostport,
