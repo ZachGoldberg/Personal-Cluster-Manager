@@ -1,0 +1,52 @@
+    Protocol Definition:
+    Initial Client Connection:
+      Client Self Identification (including key, hostname)
+      Server verifies that its an existing node, comparing key
+      to a verified database.
+
+
+    No, that doesn't make sense.  Why would we chose to handle
+    the problems of identification and authorization?  The purpose
+    of this tool is to manage machines, not authenticate them.  Stick
+    to core competency.  Let SSH do the hard work.
+ 
+    DESIGN DESCISION: All interactions will happen via ssh commands.
+           Rather then pinging a machine via TCP to ask and do things,
+           you ssh in (letting ssh handle authorization) then invoke
+           the master backend as a process.  So all we're building then
+           is a tool which runs on the local machine, dont need to worry
+           about session handling, or authentication etc.  If you can login
+           and run the tool, then you've already proven yourself authenticated.
+           
+           Client's roles in life then is simply to remain a reverse
+           SSH tunnel open forever with the master, so the master
+           can provide shells over that route at any time.
+
+           Master's role is to know which clients are available,
+           verify that the tunnels exist.  If the tunnels don't exist try
+           and find the clients and make them exist.  If the client is
+           unreachable thats fine, make a note of it.  Master should
+           keep records of what clients are available when, what ports
+           they used or are using, and the client id and ip on each login.
+           Every client "login" to the master should provide an id and a proof
+           of said id.  If the proof token is not the same as last time
+           then the host should be considered a new host.  We should always
+           assume that if the client is talking to the master the client
+           IS properly authenticated... because they've already found a way    
+           to talk to the master.  The purpose of the token is identification,
+           not authorization.  
+           
+           Various UIs should be able to talk to the master and find out
+           who is available, and communicate with the client via the tunnels
+           that the master knows about.  Master should know who is using what
+           tunnels when (and via what UI) and be able to report and log such
+           things.  
+
+    New workflow pattern:
+    Admin brings up a new client.
+    Two choices:
+      Admin gives master credentials to login to client.  Runs a command
+        on the master, master logs into client and sets things up
+        as necessary
+      Admin gives client credneitlas to login to master.  Client connects
+        to master, registers itself remotely and starts.
