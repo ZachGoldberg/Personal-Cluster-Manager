@@ -1,4 +1,4 @@
-import sys, os, paramiko, getpass
+import sys, os
 
 DEBUG = True
 
@@ -18,30 +18,6 @@ def die(msg, code=1):
 def succeed(msg="OK"):
     die(msg, code=0)
 
-
-def check_tunnel(tunnelport, user, keyfile):
-    if not user:
-        user=getpass.getuser()
-
-    ssh = paramiko.SSHClient()    
-    ssh.set_missing_host_key_policy(
-        paramiko.AutoAddPolicy())
-
-
-    print user
-    try:
-        if keyfile:
-            ssh.connect("127.0.0.1", username=user, port=tunnelport,
-                        key_filename=privatekeyfile)
-        else:
-            ssh.connect("127.0.0.1", username=user, port=tunnelport)
-
-        print "CONNECTED"
-    except:
-        print "NOT CONNECTED"
-        import traceback
-        traceback.print_exc()
-        
 
 def identity_file():
     return "/tmp/%s.pcm_identity" % os.getppid()

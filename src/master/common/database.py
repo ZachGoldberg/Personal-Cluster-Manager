@@ -70,7 +70,15 @@ class Database(object):
                     "hostport INTEGER",
                     "masterip VARCHAR",
                     "masterport INTEGER",
+                    "tunnelid INTEGER",
+                    "tunnelavailable INTEGER",
                     "timestamp DATETIME"
+                    ])
+            self.__create_table("tunnel", [
+                    "id INTEGER PRIMARY KEY",
+                    "port INTEGER",
+                    "user VARCHAR",
+                    "keyfile VARCHAR"
                     ])
 
 db = Database()

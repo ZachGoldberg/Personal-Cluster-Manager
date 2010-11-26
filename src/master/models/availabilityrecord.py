@@ -12,16 +12,21 @@ class AvailabilityRecord(object):
     hostport = Int()
     masterip = Unicode()
     masterport = Int()
+    tunnelid = Int()
+    tunnelavailable = Int()
     timestamp = DateTime()
     
     def __init__(self, host, hostip, hostport,
-                 masterip, masterport, timestamp):
+                 masterip, masterport, 
+                 tunnelid, tunnelavailable, timestamp):
 
         self.hostid = host.id
         self.hostip = unicode(hostip)
         self.hostport = int(hostport)
         self.masterip = unicode(masterip)
         self.masterport = int(masterport)
+        self.tunnelid = int(tunnelid)
+        self.tunnelavailable = int(tunnelavailable)
         self.timestamp = timestamp
 
         AvailabilityRecord.add_record(self)
@@ -32,15 +37,17 @@ class AvailabilityRecord(object):
             db.store.add(record)
 
     @classmethod
-    def register(clazz, host):
-        print host.id
+    def register(clazz, host, tunnel):
+        tunnel.check_available()
+
         (hostip, hostport, masterip, masterport) = \
             os.environ['SSH_CONNECTION'].split(' ')
-        print hostip, hostport, masterip, masterport
         record = AvailabilityRecord(host,
                                     hostip,
                                     hostport,
                                     masterip,
                                     masterport,
+                                    tunnel.id,
+                                    tunnel.available,
                                     datetime.now())
         
