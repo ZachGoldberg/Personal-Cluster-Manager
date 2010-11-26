@@ -22,11 +22,12 @@ class Tunnel(object):
         result = db.store.find(Tunnel,
                                Tunnel.port == tunnelport,
                                Tunnel.user == user,
-                               Tunnel.keyfile == keyfile)[0]
-        if not result:
+                               Tunnel.keyfile == keyfile)
+
+        if result.count() == 0:
             return Tunnel(tunnelport, user, keyfile)
 
-        return result
+        return result[0]
 
     @classmethod
     def add_tunnel(clazz, tunnel):
