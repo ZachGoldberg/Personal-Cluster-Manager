@@ -44,6 +44,10 @@ class Database(object):
         self.store = Store(self.db)
         self.commit_count = 0
 
+    def __create_table(self, name, types):
+        self.store.execute("CREATE TABLE %s %s" % (name,
+                           "( %s )" % ', '.join(types)))
+
     def __init_db(self):
         try:
             os.mkdir(os.path.dirname(DB_LOC))
@@ -52,9 +56,10 @@ class Database(object):
         
         self.__init_store()
         with self.transaction():
-            self.store.execute("CREATE TABLE host "
-                               "(id INTEGER PRIMARY KEY, "
-                               "name VARCHAR, "
-                               "uniquetoken VARCHAR)")
+            self.__create_table("host", [
+                    "id INTEGER PRIMARY KEY",
+                    "name VARCHAR",
+                    "uniquetoken VARCHAR"
+                    ])
 
 db = Database()
