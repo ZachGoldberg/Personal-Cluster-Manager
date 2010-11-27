@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 import sys
-from common.database import db
 from common import *
+from common.database import db
 
 def check_deps():
     try:
@@ -23,7 +23,6 @@ if __name__ == "__main__":
         die("Usage: %s command commandargs" % args[0])
 
     lookup_id()
-
     command = args[1]
     try:
         module = __import__("commands.%s" % command,

@@ -1,6 +1,6 @@
 import sys, os
 
-DEBUG = True
+DEBUG = False
 
 def print_stats():
     from common.database import db
@@ -9,13 +9,14 @@ def print_stats():
     sys.stderr.write("Host token: %s\n" % os.environ.get("PCM_HOSTTOKEN"))
 
 def die(msg, code=1):
-    sys.stderr.write("%s\n" % msg)
+    if msg:
+        sys.stderr.write("%s\n" % msg)
     if DEBUG:
         print_stats()
 
     sys.exit(code)
 
-def succeed(msg="OK"):
+def succeed(msg=""):
     die(msg, code=0)
 
 

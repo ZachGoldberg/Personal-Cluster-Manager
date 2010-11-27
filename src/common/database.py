@@ -78,6 +78,7 @@ class Database(object):
                     "id INTEGER PRIMARY KEY",
                     "port INTEGER",
                     "user VARCHAR",
+                    "hostid INTEGER",
                     "keyfile VARCHAR"
                     ])
 

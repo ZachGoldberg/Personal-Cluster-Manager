@@ -5,9 +5,9 @@ from models import Host, AvailabilityRecord, Tunnel
 
 
 def identify(args):
-    if len(args) < 3:
+    if len(args) < 4:
         die("identify syntax: identify "
-            "<hostname> <hostuniqueid> <tunnelport> [hostuser] [privatekeyfile]")
+            "<hostname> <hostuniqueid> <tunnelport> <hostuser> [privatekeyfile]")
         
     hostname = unicode(args[0])
     hostid = unicode(args[1])
@@ -31,7 +31,7 @@ def identify(args):
     f.close()    
 
     # Check if the tunnel works
-    tunnel = Tunnel.get_tunnel(tunnelport, hostuser, privatekey)
+    tunnel = Tunnel.get_tunnel(tunnelport, host, hostuser, privatekey)
 
     # Log that we saw this machine
     record = AvailabilityRecord.register(host, tunnel)

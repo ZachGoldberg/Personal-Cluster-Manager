@@ -9,12 +9,15 @@ class Tunnel(object):
     port = Int()
     user = Unicode()
     keyfile = Unicode()
+    hostid = Int()
 
-    def __init__(self, tunnelport, user=None, keyfile=None):
+    def __init__(self, tunnelport, host, user=None, keyfile=None):
         self.port = tunnelport
-        self.user = user or getpass.getuser()
+        self.user = unicode(user) or unicode(getpass.getuser())
         self.user = unicode(self.user)
         self.keyfile = unicode(keyfile)
+        self.hostid = host.id
+        self.available = -1
         Tunnel.add_tunnel(self)
 
 
@@ -23,19 +26,21 @@ class Tunnel(object):
             return simplejson.dumps({
                     'user': self.user,
                     'port': self.port,
+                    'hostid': self.hostid,
                     'keyfile': self.keyfile
                     })
         return "%s@localhost:%s (%s)" % (self.user, self.port, self.keyfile)
 
     @classmethod
-    def get_tunnel(clazz, tunnelport, user=None, keyfile=None):
+    def get_tunnel(clazz, tunnelport, host, user=None, keyfile=None):
         result = db.store.find(Tunnel,
                                Tunnel.port == tunnelport,
                                Tunnel.user == unicode(user),
-                               Tunnel.keyfile == unicode(keyfile))
+                               Tunnel.keyfile == unicode(keyfile),
+                               Tunnel.hostid == int(host.id))
 
         if result.count() == 0:
-            return Tunnel(tunnelport, user, keyfile)
+            return Tunnel(tunnelport, host, user, keyfile)
 
         return result[0]
 

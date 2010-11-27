@@ -45,21 +45,23 @@ class AvailabilityRecord(object):
             from models import Tunnel
             self.tunnel = db.store.get(Tunnel, self.tunnelid)
         if os.environ.get('PCM_AS_JSON'):
-            values = ['hostip', 'id', 'hostport', 
+            values = ['hostid', 'hostip', 'id', 'hostport', 
                       'masterip', 'masterport',
                       'tunnelavailable', 
+                      'tunnelid',
                       'timestamp']
             data = dict(zip(values, [str(getattr(self, v)) for v in values]))
             data['tunnelport'] = self.tunnel.port
                        
             return simplejson.dumps(data)
                 
-        return "%s:%s -> %s:%s -R port %s, Available: %s" % (
+        return "%s:%s -> %s:%s -R port %s (%s), Available: %s" % (
             self.hostip,
             self.hostport,
             self.masterip,
             self.masterport,
             self.tunnel.port,
+            self.tunnel.keyfile,
             self.tunnelavailable
             )
 
@@ -69,11 +71,18 @@ class AvailabilityRecord(object):
             db.store.add(record)
 
     @classmethod
-    def register(clazz, host, tunnel):
-        tunnel.check_available()
-
-        (hostip, hostport, masterip, masterport) = \
-            os.environ['SSH_CONNECTION'].split(' ')
+    def register(clazz, host, tunnel, check=True):
+        if check:
+            tunnel.check_available()
+            
+        if "SSH_CONNECTION" in os.environ:
+            (hostip, hostport, masterip, masterport) = \
+                os.environ.get('SSH_CONNECTION').split(' ')
+        else:
+            hostip = 0
+            hostport = 0
+            masterip = 0
+            masterport = 0
         return AvailabilityRecord(host,
                                   hostip,
                                   hostport,
