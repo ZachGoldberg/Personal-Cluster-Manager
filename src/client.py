@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys, subprocess, random, os, time, socket
+import sys, subprocess, random, os, time, socket, optparse
 
 from common import check_output
 
@@ -48,15 +48,12 @@ def get_tunnel_port(keyfile, masterport, masteruser, masterhost):
     return tunnelport
 
 
-def main(args):
-    masteruser = args[0]
-    masterhost = args[1]
-    masterport = args[2]
-    localport = args[3]
-    keyfile = ""
-    if len(args) == 5:
-        if args[4]:
-            keyfile = "-i %s" % args[4]
+def main(options):
+    masteruser = options.masteruser
+    masterhost = options.masterhost
+    masterport = options.masterport
+    localport = options.localport
+    keyfile = "-i %s" % options.masterkey
 
     uniquekey = get_key()
     tunnelport = get_tunnel_port(keyfile, masterport, masteruser, masterhost)
@@ -77,8 +74,8 @@ def main(args):
             'host': socket.gethostname(),
             'key': uniquekey,
             'tunnel': tunnelport,
-            'localuser': "zgoldberg",
-            'localkey': "",
+            'localuser': options.localuser,
+            'localkey': options.localkey,
             }
         cmd = "%s '%s'" % (sshcmd, execmd)
         print "Identifying to master"
@@ -88,11 +85,56 @@ def main(args):
         os.system(sshcmd)
         time.sleep(5)
 
+def parse_args():
+
+    parser = optparse.OptionParser()
+    parser.add_option('-H', '--master-host', action='store',
+                       dest='masterhost',
+                       help='Host of the master server')
+
+    parser.add_option('-U', '--master-user', action='store',
+                       dest='masteruser',
+                       help='Username to login to the master server')
+
+    parser.add_option('-P', '--master-port', action='store',
+                      dest='masterport',
+                      default='22',
+                      help="SSH port on the master server (default: 22)")
+
+    parser.add_option('-K', '--master-key', action='store',
+                      dest='masterkey',
+                      help="SSH private key to use to login to the master")
+
+    parser.add_option('-u', '--local-user', action='store',
+                       dest='localuser',
+                       help='Username to login to the client server'
+                      'from the master')
+
+    parser.add_option('-p', '--local-port', action='store',
+                      dest='localport',
+                      default='22',
+                      help="SSH port on the client server (default: 22)")
+
+    parser.add_option('-k', '--local-key', action='store',
+                      dest='localkey',
+                      help="SSH file (on the remote master machine)"
+                      "which the master uses to login to the client")
+    
+
+    options, _ = parser.parse_args()
+
+    if not options.localuser or not options.masterkey or \
+            not options.localkey or not options.masteruser or \
+            not options.masterhost:
+        parser.error("Missing options.  Please consult --help for a list of"
+                     "required options")
+    
+
+    return options
+
+
 if __name__ == "__main__":
 
-    args = sys.argv
-    if len(args) < 4:
-        die("Usage: %s masteruser masterhost masterport localport [masterkey]" % args[0])
-
-    main(args[1:])
+    options = parse_args()
+    main(options)
     
