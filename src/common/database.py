@@ -10,14 +10,20 @@ DB_LOC = "/var/lib/kinecktor/db.sqlite3"
 
 class Database(object):
     def __init__(self):
-        # Check that the DB file exists.
-        # If so, great.
-        # If not, try and create it as root.  If we're not root, bail out.
+        global DB_LOC
+        # Check that the root user DB file exists.
+        # if so, great, use it.
+        # if not, try and create it
+        # if we're not root use a local user db file instead.
         if not os.path.exists(DB_LOC):
-            if getpass.getuser() != "root":
-                die("Must be root the first time you run this app")
-
-            self.__init_db()
+            if getpass.getuser() == "root":
+                self.__init_db()
+            else:
+                DB_LOC = "%s/.pcm_data" % os.environ['HOME']
+                if not os.path.exists(DB_LOC):
+                    self.__init_db()
+                else:
+                    self.__init_store()
         else:
             self.__init_store()
 
