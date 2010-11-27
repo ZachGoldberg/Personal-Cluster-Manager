@@ -61,6 +61,9 @@
 
 
     Dependencies: Storm, Paramiko
-    IDEA: Paramiko isn't really essential, its just cleaner than os.system(ssh)...
+    IDEA: Paramiko isn't really essential, its just cleaner than os.system(ssh).
     so on systems without paramiko we can implement a "fake paramiko" which just
     makes openssh calls for things we need.
+
+    TODO: Update models to use storm References
+
