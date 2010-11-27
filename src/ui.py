@@ -6,6 +6,7 @@ SCR = None
 HOSTS = []
 AVAILABLE = []
 YPOS = 0
+REFRESH_PROC = None
 
 def add_line(str):
     global YPOS
@@ -27,9 +28,13 @@ def mainmenu():
     add_line("4. Refresh Active Hosts")
     add_line("Your Choice: ")
     SCR.refresh()
-    SCR.getstr()
-    
-
+    char = SCR.getstr()
+    if char == "4":
+        global REFRESH_PROC
+        args = "./master.py refresh_tunnels"
+        REFRESH_PROC = subprocess.Popen(args, shell=True,
+                         stdout=subprocess.PIPE)
+        
 def header():
     add_line("#" * 50)
     add_line("Personal Cluster Management Tool -- Curses UI")
@@ -38,6 +43,7 @@ def header():
 
 
 def basic_data():    
+    global REFRESH_PROC, AVAILABLE
     add_line("-" * 50)
     printed = {}
     lines = []
@@ -53,6 +59,14 @@ def basic_data():
     add_line("(%s) Available Hosts:" % len(lines))
     [add_line(l) for l in lines]
     add_line("-" * 50)
+
+    if REFRESH_PROC:
+        if REFRESH_PROC.poll() != None:
+            REFRESH_PROC = None
+            AVAILABLE = runcmd("listrecords available unique")            
+        else:
+            add_line("Refresh Process Running")
+            add_line("-" * 50)
 
 def runcmd(args, parse=True):
     os.environ['PCM_AS_JSON'] = "True"
@@ -79,11 +93,16 @@ def main():
     global SCR, HOSTS, AVAILABLE
     SCR = curses.initscr()
     refresh()
-    add_line("Loading initial data...")
+    add_line("Loading initial host data...")
     SCR.refresh()
-    
     loadhosts()
+
+    add_line("Refreshing tunnel state...")
+    SCR.refresh()
     runcmd("refresh_tunnels", parse=False)
+
+    add_line("Refreshing available records...")
+    SCR.refresh()
     AVAILABLE = runcmd("listrecords available unique")
 
     while True:
