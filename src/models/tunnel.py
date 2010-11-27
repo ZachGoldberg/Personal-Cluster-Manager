@@ -1,3 +1,4 @@
+from __future__ import with_statement
 import getpass, paramiko, simplejson, os
 from storm.locals import *
 

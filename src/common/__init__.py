@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, subprocess
 
 DEBUG = False
 
@@ -19,6 +19,10 @@ def die(msg, code=1):
 def succeed(msg=""):
     die(msg, code=0)
 
+
+def check_output(cmd):
+    return subprocess.Popen(cmd, shell=True, 
+                            stdout=subprocess.PIPE).communicate()[0].strip()
 
 def identity_file():
     return "/tmp/%s.pcm_identity" % os.getppid()

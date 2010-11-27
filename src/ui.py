@@ -29,15 +29,15 @@ def refresh():
 
 def mainmenu():
     add_line(" " * 20 + "Main Menu")
-    add_line("0. Refresh Window")
-    add_line("1. List All Known Hosts")
-    add_line("2. List All Known Tunnels")
-    add_line("3. List All Known Availability Records")
-    add_line("4. Refresh Active Hosts")
+    add_line("_. Refresh Window")
+    add_line("a. List All Known Hosts")
+    add_line("b. List All Known Tunnels")
+    add_line("c. List All Known Availability Records")
+    add_line("d. Refresh Active Hosts")
     add_line("Your Choice: ")
     SCR.refresh()
     char = SCR.getstr()
-    if char == "4":
+    if char == "d":
         global REFRESH_PROC
         args = "./master.py refresh_tunnels"
         REFRESH_PROC = subprocess.Popen(args, shell=True,
@@ -53,6 +53,14 @@ def header():
 def basic_data():    
     global REFRESH_PROC, AVAILABLE
     add_line("-" * 50)
+    if REFRESH_PROC:
+        if REFRESH_PROC.poll() != None:
+            REFRESH_PROC = None
+            AVAILABLE = runcmd("listrecords available unique")            
+        else:
+            add_line("Refresh Process Running")
+            add_line("-" * 50)
+
     printed = {}
     lines = []
     for host in AVAILABLE:
@@ -64,17 +72,10 @@ def basic_data():
                                   host['timestamp']))
         printed[host['hostid']] = True
 
-    add_line("(%s) Available Hosts:" % len(lines))
-    [add_line(l) for l in lines]
+    add_line("Available Hosts:")
+    [add_line("%s. %s" % ((num+1), l)) for num, l in enumerate(lines)]
     add_line("-" * 50)
 
-    if REFRESH_PROC:
-        if REFRESH_PROC.poll() != None:
-            REFRESH_PROC = None
-            AVAILABLE = runcmd("listrecords available unique")            
-        else:
-            add_line("Refresh Process Running")
-            add_line("-" * 50)
 
 def runcmd(args, parse=True):
     os.environ['PCM_AS_JSON'] = "True"
