@@ -1,5 +1,12 @@
 #!/usr/bin/python
 import curses, subprocess, os, simplejson
+# NOTES:
+# The UI really should *never* be tied to any kind of legwork,
+# like refreshing the backend etc.  It should be a dumb client
+# ontop of the backend.  On initial load we shouldnt need to
+# tell the backend to refresh, we should have a cronjob or a daemon
+# which does that for us so we can assume the data we get is recent.
+
 
 CURRENT_LOC="mainmenu"
 SCR = None
