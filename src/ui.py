@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import curses, subprocess, os, simplejson
+from datetime import datetime
 # NOTES:
 # The UI really should *never* be tied to any kind of legwork,
 # like refreshing the backend etc.  It should be a dumb client
@@ -44,7 +45,7 @@ def mainmenu():
         
 def header():
     add_line("#" * 50)
-    add_line("Personal Cluster Management Tool -- Curses UI")
+    add_line("Personal Cluster Management Tool -- Curses UI %s" % datetime.now())
     add_line("#" * 50)
 
 
@@ -100,6 +101,9 @@ def main():
     global SCR, HOSTS, AVAILABLE
     SCR = curses.initscr()
     refresh()
+
+    SCR.timeout(5000)
+
     add_line("Loading initial host data...")
     SCR.refresh()
     loadhosts()
