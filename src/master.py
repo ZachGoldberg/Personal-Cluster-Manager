@@ -15,6 +15,16 @@ def check_deps():
     except:
         die("You need python-paramiko (the sshv2 implementation) for this application!")
 
+    try:
+        import simplejson
+    except:
+        die("You need python-simplejson for this application!")
+
+    try:
+        import threadpool
+    except:
+        die("You need python-threadpool for this application!")
+
 if __name__ == "__main__":
     check_deps()
 
