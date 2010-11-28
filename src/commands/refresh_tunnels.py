@@ -7,13 +7,14 @@ from models import *
 
 def refresh_tunnels(args):
     tunnels = db.store.find(Tunnel)
-    pool = ThreadPool(5)
-    for tunnel in tunnels:
-        request = WorkRequest(tunnel.check_available)
-        pool.putRequest(request)
+    if tunnels:
+        pool = ThreadPool(tunnels.count())
+        for tunnel in tunnels:
+            request = WorkRequest(tunnel.check_available)
+            pool.putRequest(request)
 
-    pool.wait()
-    
+        pool.wait()
+        
     for tunnel in tunnels:
         host = db.store.get(Host, tunnel.hostid)
         record = AvailabilityRecord.register(host, tunnel, check=False)
