@@ -4,6 +4,7 @@ import sys
 from common import *
 from common.database import db
 
+
 def check_deps():
     try:
         import storm
@@ -40,6 +41,7 @@ if __name__ == "__main__":
                             command)
     except ImportError:
         die("Invalid command: %s" % command)
+        
 
     module.__dict__[command](args[2:])
 

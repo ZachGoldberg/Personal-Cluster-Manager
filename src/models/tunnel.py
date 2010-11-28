@@ -30,7 +30,8 @@ class Tunnel(object):
                     'hostid': self.hostid,
                     'keyfile': self.keyfile
                     })
-        return "%s@localhost:%s (%s)" % (self.user, self.port, self.keyfile)
+        return "%s: %s@localhost:%s (%s)" % (self.hostid,
+                                             self.user, self.port, self.keyfile)
 
     @classmethod
     def get_tunnel(clazz, tunnelport, host, user=None, keyfile=None):

@@ -1,6 +1,9 @@
 #!/usr/bin/python
 import curses, subprocess, os, simplejson
 from datetime import datetime
+
+from common.menu import Menu
+
 # NOTES:
 # The UI really should *never* be tied to any kind of legwork,
 # like refreshing the backend etc.  It should be a dumb client
@@ -10,6 +13,7 @@ from datetime import datetime
 
 
 CURRENT_LOC="mainmenu"
+AUX = None
 SCR = None
 HOSTS = []
 AVAILABLE = []
@@ -27,22 +31,63 @@ def refresh():
     SCR.refresh()
     YPOS = 0
 
+def refresh_hosts():
+    global REFRESH_PROC
+    args = "./master.py refresh_tunnels"
+    REFRESH_PROC = subprocess.Popen(args, shell=True,
+                                    stdout=subprocess.PIPE)
+def listhosts():
+    menu = Menu("Known Hosts")
+    menu.add_option("Main Menu",
+                    action=lambda: change_menu('mainmenu'), hotkey="*")
+    for host in HOSTS.values():
+        menu.add_option("%s (%s)" % (host['name'], host['uniquetoken']),
+                        action=lambda: change_menu('host_options', host))
+
+    menu.render(SCR, add_line)
+
+def host_options():
+    host = AUX
+    menu = Menu("%s (%s)" % (host['name'], host['uniquetoken']))
+    menu.add_option("Main Menu",
+                    action=change_menu('mainmenu'), hotkey="*")
+    menu.add_option("Show all associated tunnels", None)
+    menu.add_option("Show all associated tunnel activity", None)
+    menu.render(SCR, add_line)
+    
+
+def listtunnels():
+    menu = Menu("Known Tunnels")
+    menu.add_option("Main Menu",
+                    action= lambda: change_menu('mainmenu'), hotkey="*")
+    for host in HOSTS.values():
+        menu.add_option("%s (%s)" % (host['name'], host['uniquetoken']),
+                        action=lambda: change_menu('host_options', host))
+
+    menu.render(SCR, add_line)
+
+
+def listrecords():
+    pass
+
+def change_menu(newmenu, aux=None):
+    global CURRENT_LOC, AUX
+    CURRENT_LOC = newmenu
+    AUX = aux
+
 def mainmenu():
-    add_line(" " * 20 + "Main Menu")
-    add_line("_. Refresh Window")
-    add_line("a. List All Known Hosts")
-    add_line("b. List All Known Tunnels")
-    add_line("c. List All Known Availability Records")
-    add_line("d. Refresh Active Hosts")
-    add_line("Your Choice: ")
-    SCR.refresh()
-    char = SCR.getstr()
-    if char == "d":
-        global REFRESH_PROC
-        args = "./master.py refresh_tunnels"
-        REFRESH_PROC = subprocess.Popen(args, shell=True,
-                         stdout=subprocess.PIPE)
-        
+    menu = Menu("Main Menu")
+    menu.add_option("Refresh Window", action=dir, hotkey="*")
+    menu.add_option("List All Known Hosts", 
+                    action=lambda: change_menu('listhosts'))
+    menu.add_option("List All Known Tunnels", 
+                    action=lambda: change_menu('listtunnels'))
+    menu.add_option("List All Known Availability Records",
+                    action=lambda: change_menu('listrecords'))
+
+    menu.add_option("Refresh Active Hosts", action=refresh_hosts)
+    menu.render(SCR, add_line)
+    
 def header():
     add_line("#" * 50)
     add_line("Personal Cluster Management Tool -- Curses UI %s" % datetime.now())
@@ -109,10 +154,6 @@ def main():
     SCR.refresh()
     loadhosts()
 
-    add_line("Refreshing tunnel state...")
-    SCR.refresh()
-    runcmd("refresh_tunnels", parse=False)
-
     add_line("Refreshing available records...")
     SCR.refresh()
     AVAILABLE = runcmd("listrecords available unique")
@@ -122,6 +163,7 @@ def main():
         header()
         basic_data()
         globals()[CURRENT_LOC]()
+
     curses.endwin()
 
 if __name__ == '__main__':
