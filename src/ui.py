@@ -2,7 +2,7 @@
 import curses, subprocess, os, simplejson
 from datetime import datetime
 
-from common.menu import Menu
+from common.menu import MenuFactory, MenuOption
 
 # NOTES:
 # The UI really should *never* be tied to any kind of legwork,
@@ -19,6 +19,8 @@ HOSTS = []
 AVAILABLE = []
 YPOS = 0
 REFRESH_PROC = None
+MENUFACTORY = None
+
 
 def add_line(str):
     global YPOS
@@ -37,31 +39,41 @@ def refresh_hosts():
     REFRESH_PROC = subprocess.Popen(args, shell=True,
                                     stdout=subprocess.PIPE)
 def listhosts():
-    menu = Menu("Known Hosts")
-    menu.add_option("Main Menu",
+    menu = MENUFACTORY.new_menu("Known Hosts")
+    menu.add_option_vals("Main Menu",
                     action=lambda: change_menu('mainmenu'), hotkey="*")
     for host in HOSTS.values():
-        menu.add_option("%s (%s)" % (host['name'], host['uniquetoken']),
+        menu.add_option_vals("%s (%s)" % (host['name'], host['uniquetoken']),
                         action=lambda: change_menu('host_options', host))
 
     menu.render(SCR, add_line)
 
+def showtunnels():
+    host = AUX
+
+def showrecords():
+    host = AUX
+
 def host_options():
     host = AUX
-    menu = Menu("%s (%s)" % (host['name'], host['uniquetoken']))
-    menu.add_option("Main Menu",
-                    action=change_menu('mainmenu'), hotkey="*")
-    menu.add_option("Show all associated tunnels", None)
-    menu.add_option("Show all associated tunnel activity", None)
+
+    menu = MENUFACTORY.new_menu("%s (%s)" % (host['name'], host['uniquetoken']))
+    menu.add_option_vals("Main Menu",
+                    action=lambda: change_menu('mainmenu'), hotkey="*")
+    menu.add_option_vals("Show all associated tunnels",
+                    action=lambda: change_menu('showtunnels',  host))
+    menu.add_option_vals("Show all associated tunnel activity", 
+                    action=lambda: change_menu('showrecords', host))
+                    
     menu.render(SCR, add_line)
     
 
 def listtunnels():
-    menu = Menu("Known Tunnels")
-    menu.add_option("Main Menu",
+    menu = MENUFACTORY.new_menu("Known Tunnels")
+    menu.add_option_vals("Main Menu",
                     action= lambda: change_menu('mainmenu'), hotkey="*")
     for host in HOSTS.values():
-        menu.add_option("%s (%s)" % (host['name'], host['uniquetoken']),
+        menu.add_option_vals("%s (%s)" % (host['name'], host['uniquetoken']),
                         action=lambda: change_menu('host_options', host))
 
     menu.render(SCR, add_line)
@@ -76,16 +88,17 @@ def change_menu(newmenu, aux=None):
     AUX = aux
 
 def mainmenu():
-    menu = Menu("Main Menu")
-    menu.add_option("Refresh Window", action=dir, hotkey="*")
-    menu.add_option("List All Known Hosts", 
+    menu = MENUFACTORY.new_menu("Main Menu")
+    menu.add_option_vals("Refresh Window", action=dir, hotkey="*")
+    menu.add_option_vals("List All Known Hosts", 
                     action=lambda: change_menu('listhosts'))
-    menu.add_option("List All Known Tunnels", 
+    menu.add_option_vals("List All Known Tunnels", 
                     action=lambda: change_menu('listtunnels'))
-    menu.add_option("List All Known Availability Records",
+    menu.add_option_vals("List All Known Availability Records",
                     action=lambda: change_menu('listrecords'))
 
-    menu.add_option("Refresh Active Hosts", action=refresh_hosts)
+    menu.add_option_vals("Refresh Active Hosts", action=refresh_hosts)
+#    raise Exception(str(menu))
     menu.render(SCR, add_line)
     
 def header():
@@ -93,10 +106,16 @@ def header():
     add_line("Personal Cluster Management Tool -- Curses UI %s" % datetime.now())
     add_line("#" * 50)
 
+class MenuChanger(object):
+    def __init__(self, changer, *args):
+        self.changer = changer
+        self.args = args
 
+    def __call__(self):
+        self.changer(*self.args)
 
 def basic_data():    
-    global REFRESH_PROC, AVAILABLE
+    global REFRESH_PROC, AVAILABLE, MENUFACTORY
     add_line("-" * 50)
     if REFRESH_PROC:
         if REFRESH_PROC.poll() != None:
@@ -106,19 +125,35 @@ def basic_data():
             add_line("Refresh Process Running")
             add_line("-" * 50)
 
+
+    MENUFACTORY = MenuFactory()
     printed = {}
     lines = []
     for host in AVAILABLE:
         if printed.get(host['hostid']):
             continue
 
-        lines.append("%s:%s at %s" % (HOSTS[int(host['hostid'])]['name'],
-                                  host['tunnelport'],
-                                  host['timestamp']))
+        hostobj = HOSTS[int(host['hostid'])]
+
+        lines.append("%s:%s(%s) at %s" % (hostobj['name'],
+                                          host['tunnelport'],
+                                          hostobj['uniquetoken'],
+                                          host['timestamp']))
+
+        option = MenuOption(
+            HOSTS[int(host['hostid'])],
+            action=(MenuChanger(change_menu, 'host_options', 
+                                hostobj)),
+            hotkey=str(len(lines)),
+            hidden=True)
+
+        MENUFACTORY.add_default_option(option)
         printed[host['hostid']] = True
 
     add_line("Available Hosts:")
-    [add_line("%s. %s" % ((num+1), l)) for num, l in enumerate(lines)]
+    for num, l in enumerate(lines):
+        add_line("%s. %s" % ((num+1), l))
+
     add_line("-" * 50)
 
 
