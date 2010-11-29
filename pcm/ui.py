@@ -252,7 +252,7 @@ def basic_data():
     lines = []
     
     for host in AVAILABLE:
-        if printed.get(host['hostid']):
+        if printed.get(host['tunnelid']):
             continue
 
         hostobj = HOSTS[int(host['hostid'])]
@@ -270,7 +270,7 @@ def basic_data():
             hidden=True)
 
         MENUFACTORY.add_default_option(option)
-        printed[host['hostid']] = True
+        printed[host['tunnelid']] = True
 
     add_line("Available Hosts:")
     for num, l in enumerate(lines):

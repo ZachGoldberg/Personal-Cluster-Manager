@@ -25,3 +25,6 @@ setup(
         },
     
 )
+
+os.system("cp etc/pcm_client /etc/init.d")
+os.system("chmod o+x /etc/init.d/pcm_client")
