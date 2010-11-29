@@ -1,6 +1,6 @@
-from common.database import db
-from common import *
-from models import Host
+from pcm.common.database import db
+from pcm.common import *
+from pcm.models import Host
 
 
 

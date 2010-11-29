@@ -3,7 +3,7 @@ import sys, os, subprocess
 DEBUG = False
 
 def print_stats():
-    from common.database import db
+    from pcm.common.database import db
     sys.stderr.write("Commits: %s\n" % db.commit_count)
     sys.stderr.write("Hostname: %s\n" % os.environ.get("PCM_HOSTNAME"))
     sys.stderr.write("Host token: %s\n" % os.environ.get("PCM_HOSTTOKEN"))

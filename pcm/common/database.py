@@ -6,7 +6,7 @@ from storm.database import create_database
 from storm.store import Store
 
 
-from common import die
+from pcm.common import die
 
 DB_LOC = "/var/lib/kinecktor/db.sqlite3"
 

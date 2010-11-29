@@ -1,5 +1,5 @@
-from common.database import db
-from models import Host
+from pcm.common.database import db
+from pcm.models import Host
 
 def listhosts(args):
     hosts = list(db.store.find(Host))

@@ -2,7 +2,7 @@ from __future__ import with_statement
 import getpass, paramiko, simplejson, os
 from storm.properties import *
 
-from common.database import db
+from pcm.common.database import db
 
 class Tunnel(object):
     __storm_table__ ="tunnel"

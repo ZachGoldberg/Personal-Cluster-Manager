@@ -1,7 +1,7 @@
 from threadpool import ThreadPool, WorkRequest
 
-from common.database import db
-from models import *
+from pcm.common.database import db
+from pcm.models import *
 
 
 def refresh_tunnels(args):

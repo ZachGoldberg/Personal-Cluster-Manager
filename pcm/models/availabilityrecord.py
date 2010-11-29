@@ -3,7 +3,7 @@ import os, simplejson
 from datetime import datetime
 from storm.properties import *
 
-from common.database import db
+from pcm.common.database import db
 
 class AvailabilityRecord(object):
     __storm_table__ = "availability_record"
@@ -33,7 +33,7 @@ class AvailabilityRecord(object):
         self.timestamp = timestamp
 
         if not tunnel:
-            from models import Tunnel
+            from pcm.models import Tunnel
             self.tunnel = db.store.get(Tunnel, self.tunnelid)
         else:
             self.tunnel = tunnel
@@ -43,7 +43,7 @@ class AvailabilityRecord(object):
 
     def __str__(self):
         if not self.tunnel:
-            from models import Tunnel
+            from pcm.models import Tunnel
             self.tunnel = db.store.get(Tunnel, self.tunnelid)
         if os.environ.get('PCM_AS_JSON'):
             values = ['hostid', 'hostip', 'id', 'hostport', 

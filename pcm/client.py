@@ -2,9 +2,9 @@
 
 import sys, subprocess, random, os, time, socket, optparse
 
-from common import check_output
+from pcm.common import check_output
 
-masterexec = "pcmmaster"
+masterexec = "pcm_master"
 
 def get_key():
     return check_output("ifconfig | grep HWaddr | md5sum")[:-2]
@@ -143,9 +143,10 @@ def parse_args():
 
     return options
 
-
-if __name__ == "__main__":
-
+def run():
     options = parse_args()
     main(options)
+
+if __name__ == "__main__":
+    run()
     

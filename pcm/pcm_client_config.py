@@ -3,6 +3,14 @@ import getpass, sys, os
 
 
 if __name__ == '__main__':
+    data = {}
+    file = "%s/.pcm_client_config" % os.environ['HOME']
+    if (os.path.exists(file)):
+        filedata = open(file).read().split('\n')
+        for line in filedata:
+            k, v = line.split('=')
+            data[k] = v
+
     questions = [
         ("masterhost", None, "What is the hostname of the PCM master?"),
         ("masteruser", getpass.getuser(), 
@@ -22,17 +30,21 @@ if __name__ == '__main__':
          "to the local machine?  (if none exists one must be put there)")
         ]
     
-    data = {}
+
     for question in questions:
-        sys.stdout.write("%s [default: %s]: " % (question[2], question[1]))
+        default = data.get(question[0])
+        if not default:
+            default = question[1]
+
+        sys.stdout.write("%s [default: %s]: " % (question[2], default))
         sys.stdout.flush()
         data[question[0]] = raw_input()
-        if not data[question[0]]:
-            data[question[0]] = question[1]
 
-    print data
+        if not data[question[0]]:
+            data[question[0]] = default
+
     output = '\n'.join(["%s=%s" % (k, v) for k, v in data.items()])
     print "Storing config: \n%s" % output
-    f = open("%s/.pcm_client_config" % os.environ['HOME'], 'w')
+    f = open(file, 'w')
     f.write(output)
     f.close()

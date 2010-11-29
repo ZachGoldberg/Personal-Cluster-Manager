@@ -2,7 +2,7 @@
 import curses, subprocess, os, simplejson
 from datetime import datetime
 
-from common.menu import MenuFactory, MenuOption
+from pcm.common.menu import MenuFactory, MenuOption
 
 # NOTES:
 # The UI really should *never* be tied to any kind of legwork,
@@ -36,7 +36,7 @@ def refresh():
 
 def refresh_hosts():
     global REFRESH_PROC
-    args = "./master.py refresh_tunnels"
+    args = "pcm_master refresh_tunnels"
     REFRESH_PROC = subprocess.Popen(args, shell=True,
                                     stdout=subprocess.PIPE)
 
@@ -277,7 +277,7 @@ def basic_data():
 
 def runcmd(args, parse=True):
     os.environ['PCM_AS_JSON'] = "True"
-    args = "./master.py %s" % args
+    args = "pcm_master %s" % args
     data = subprocess.Popen(args, shell=True,
                             stdout=subprocess.PIPE).communicate()[0].strip()
     if not parse:
@@ -340,8 +340,12 @@ def main():
 
     curses.endwin()
 
-if __name__ == '__main__':
+def run():
     try:
         main()
     except:
         curses.endwin()
+
+
+if __name__ == '__main__':
+    run()

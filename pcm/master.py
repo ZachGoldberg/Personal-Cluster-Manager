@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 import sys
-from common import *
-from common.database import db
+from pcm.common import *
+from pcm.common.database import db
 
 
 def check_deps():
@@ -26,7 +26,7 @@ def check_deps():
     except:
         die("You need python-threadpool for this application!")
 
-if __name__ == "__main__":
+def run():
     check_deps()
 
     args = sys.argv
@@ -36,13 +36,19 @@ if __name__ == "__main__":
     lookup_id()
     command = args[1]
     try:
-        module = __import__("commands.%s" % command,
+        module = __import__("pcm.commands.%s" % command,
                             globals(), locals(), 
                             command)
     except ImportError:
         die("Invalid command: %s" % command)
+        import traceback
+        traceback.print_exc()
         
 
     module.__dict__[command](args[2:])
 
     succeed()
+
+
+if __name__ == "__main__":
+    run()

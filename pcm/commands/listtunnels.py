@@ -1,5 +1,5 @@
-from common.database import db
-from models import Tunnel
+from pcm.common.database import db
+from pcm.models import Tunnel
 
 def listtunnels(args):
     tunnels = list(db.store.find(Tunnel))

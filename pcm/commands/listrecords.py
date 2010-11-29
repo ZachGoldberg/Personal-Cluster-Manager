@@ -1,7 +1,7 @@
 from storm.expr import Desc
 
-from common.database import db
-from models import AvailabilityRecord
+from pcm.common.database import db
+from pcm.models import AvailabilityRecord
 
 def listrecords(args):
     records = list(db.store.find(

@@ -2,7 +2,7 @@ from __future__ import with_statement
 import os, simplejson
 from storm.properties import *
 
-from common.database import db
+from pcm.common.database import db
 
 class Host(object):
     __storm_table__ = "host"
