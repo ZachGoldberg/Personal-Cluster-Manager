@@ -83,14 +83,18 @@ def showrecords():
             continue
 
         tunnel = TUNNELS[int(record['hostid'])]
-        value =  "%s -R %s %s, Up: %s, %s" % (
+        updown = "Up"
+        if record['tunnelavailable'] == "0":
+            updown = "Down"
+
+        value =  "%s -R %s %s, %s, %s" % (
             record['hostip'],
 #            record['hostport'],
 #            record['masterip'],
 #            record['masterport'],
             tunnel['port'],
             tunnel['keyfile'],
-            record['tunnelavailable'],
+            updown,
             record['timestamp']
             )
 
@@ -133,6 +137,40 @@ def listtunnels():
 
 
 def listrecords():
+    menu = MENUFACTORY.new_menu("Availability Records")
+    menu.add_option_vals("Main Menu",
+                    action= lambda: change_menu('mainmenu'), hotkey="*")
+
+    for record in ALL_AVAILABLE:
+
+        updown = "Up"
+        if record['tunnelavailable'] == "0":
+            updown = "Down"
+
+        tunnel = TUNNELS[int(record['hostid'])]
+        value =  "%s -R %s %s, %s, %s" % (
+            record['hostip'],
+#            record['hostport'],
+#            record['masterip'],
+#            record['masterport'],
+            tunnel['port'],
+            tunnel['keyfile'],
+            updown,
+            record['timestamp']
+            )
+
+        
+        menu.add_option_vals(value,
+                        action=lambda: change_menu('showrecords', host),
+                        hotkey="-")
+
+    menu.render(SCR, add_line)
+
+
+def tunnel_options():
+    """
+    show when this tunnel was used
+    """
     pass
 
 def change_menu(newmenu, aux=None):
