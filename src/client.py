@@ -122,12 +122,15 @@ def parse_args():
     
 
     options, _ = parser.parse_args()
-
     file = "%s/.pcm_client_config" % os.environ['HOME']
     if (os.path.exists(file)):
         data = open(file).read().split('\n')
         for line in data:
-            k, v = line.split('=')
+            try:
+                k, v = line.split('=')
+            except:
+                continue
+
             if not getattr(options, k):
                 setattr(options, k, v)
 

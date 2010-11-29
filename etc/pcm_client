@@ -1,0 +1,56 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          lm-sensors
+# Required-Start:    $remote_fs
+# Required-Stop:
+# Default-Start:     S
+# Default-Stop:
+# Short-Description: lm-sensors
+# Description:       hardware health monitoring
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+[ -f /etc/default/rcS ] && . /etc/default/rcS
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+PROGRAM=/usr/bin/pcm_client
+
+if [ ! -f  $HOME/.pcm_client_config ]; then
+	echo "Please run pcm_client_config before trying to run the daemon!"
+	exit 1;
+fi
+
+if [ ! -x $PROGRAM ]; then
+	PROGRAM=/usr/local/bin/pcm_client
+fi
+
+test -x $PROGRAM || exit 0
+
+usage(){
+  echo "Usage: /etc/init.d/pcm_client {start|stop|restart} user"
+  exit 1
+}
+
+case "$1" in
+  start)
+	if [ ! $2 ]; then
+		usage
+	fi
+	log_begin_msg "Starting Personal Cluster Management Client"
+	start-stop-daemon -b --start --exec $PROGRAM --user $2 >> /var/log/pcm_client 2>&1 
+	log_end_msg 0
+	;;
+  stop)
+	pkill -9 -f pcm_client
+	;;
+  force-reload|restart)
+	stop
+	$0 start
+	;;
+  *)
+	usage
+	exit 1
+esac
+
+exit 0
