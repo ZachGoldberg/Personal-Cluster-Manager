@@ -52,7 +52,26 @@ def listhosts():
 
 def showtunnels():
     host = AUX
+    menu = MENUFACTORY.new_menu("Known Tunnels for %s" % host['name'])
+    menu.add_option_vals("Main Menu",
+                    action= lambda: change_menu('mainmenu'), hotkey="*")
 
+    for tunnel in TUNNELS.values():
+        if not tunnel['hostid'] == host['id']:
+            continue
+
+        menu.add_option_vals("%s: %s:%s (%s)" % (               
+                tunnel['hostid'],
+                host['name'],
+                tunnel['port'],
+                tunnel['keyfile']
+                ),
+                        action=lambda: change_menu('tunnel_options', host))
+
+    menu.render(SCR, add_line)
+        
+        
+    
 def showrecords():
     host = AUX
 
@@ -82,7 +101,7 @@ def listtunnels():
                 tunnel['port'],
                 tunnel['keyfile']
                 ),
-                        action=lambda: change_menu('host_options', host))
+                        action=lambda: change_menu('tunnel_options', host))
 
     menu.render(SCR, add_line)
 
