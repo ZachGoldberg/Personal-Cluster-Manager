@@ -76,12 +76,50 @@ def showrecords():
     menu.render(SCR, add_line)
 
 
+def login():
+    global SCR
+    host = AUX
+    
+    for record in AVAILABLE:
+        if str(record['hostid']) == str(host['id']):
+            tunnel = TUNNELS[int(record['tunnelid'])]
+            break
+        
+    cmd = "ssh -p %s -i %s %s@localhost" % (
+        tunnel['port'],
+        tunnel['keyfile'],
+        tunnel['user'])
+
+    curses.endwin()
+    os.system("clear")
+    echo = "Executing login command: %s" % cmd
+    os.system("echo '%s' && %s" % (echo, cmd))
+    change_menu('host_options', host)
+
 def host_options():
     host = AUX
 
-    menu = MENUFACTORY.new_menu("%s (%s)" % (host['name'], host['uniquetoken']))
+    active = False
+    for record in AVAILABLE:
+        if str(record['hostid']) == str(host['id']):
+            active = True
+            break
+
+    avail = "(Down)"
+    if active:
+        avail = "(Up)"
+
+    menu = MENUFACTORY.new_menu("%s (%s) %s" % (
+            host['name'], host['uniquetoken'],
+            avail))
+
     menu.add_option_vals("Main Menu",
                     action=lambda: change_menu('mainmenu'), hotkey="*")
+
+    if active:
+        menu.add_option_vals("Login to this machine", 
+                             action=lambda: change_menu('login', host))
+
     menu.add_option_vals("Show all associated tunnels",
                     action=lambda: change_menu('showtunnels',  host))
     menu.add_option_vals("Show all associated tunnel activity", 
@@ -307,5 +345,3 @@ if __name__ == '__main__':
         main()
     except:
         curses.endwin()
-        import traceback
-        traceback.print_exc()
