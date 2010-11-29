@@ -28,7 +28,8 @@ class Tunnel(object):
                     'user': self.user,
                     'port': self.port,
                     'hostid': self.hostid,
-                    'keyfile': self.keyfile
+                    'keyfile': self.keyfile,
+                    'id': self.id
                     })
         return "%s: %s@localhost:%s (%s)" % (self.hostid,
                                              self.user, self.port, self.keyfile)

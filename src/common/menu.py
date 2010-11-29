@@ -35,6 +35,10 @@ class Menu(object):
         writer("Your Choice: ")
         screen.refresh()
         char = screen.getstr()
+
+        if not char:
+            return
+
         for option in self.options:
             if str(char) == str(option.hotkey):
                 return option.action()

@@ -16,6 +16,7 @@ CURRENT_LOC="mainmenu"
 AUX = None
 SCR = None
 HOSTS = []
+TUNNELS = []
 AVAILABLE = []
 YPOS = 0
 REFRESH_PROC = None
@@ -38,6 +39,7 @@ def refresh_hosts():
     args = "./master.py refresh_tunnels"
     REFRESH_PROC = subprocess.Popen(args, shell=True,
                                     stdout=subprocess.PIPE)
+
 def listhosts():
     menu = MENUFACTORY.new_menu("Known Hosts")
     menu.add_option_vals("Main Menu",
@@ -72,8 +74,14 @@ def listtunnels():
     menu = MENUFACTORY.new_menu("Known Tunnels")
     menu.add_option_vals("Main Menu",
                     action= lambda: change_menu('mainmenu'), hotkey="*")
-    for host in HOSTS.values():
-        menu.add_option_vals("%s (%s)" % (host['name'], host['uniquetoken']),
+    for tunnel in TUNNELS.values():
+        host = HOSTS[tunnel['hostid']]
+        menu.add_option_vals("%s: %s:%s (%s)" % (               
+                tunnel['hostid'],
+                host['name'],
+                tunnel['port'],
+                tunnel['keyfile']
+                ),
                         action=lambda: change_menu('host_options', host))
 
     menu.render(SCR, add_line)
@@ -129,6 +137,7 @@ def basic_data():
     MENUFACTORY = MenuFactory()
     printed = {}
     lines = []
+    
     for host in AVAILABLE:
         if printed.get(host['hostid']):
             continue
@@ -178,6 +187,28 @@ def loadhosts():
     for host in hostlist:
         HOSTS[host['id']] = host
 
+def loadtunnels():
+    global TUNNELS
+    tunnellist = runcmd("listtunnels")
+    TUNNELS = {}
+    for tunnel in tunnellist:
+        TUNNELS[tunnel['id']]= tunnel
+
+def refresh_data():
+    add_line("Loading host data...")
+    SCR.refresh()
+    loadhosts()
+
+    add_line("Loading tunnel data...")
+    SCR.refresh()
+    loadtunnels()
+
+    add_line("Refreshing available records...")
+    SCR.refresh()
+    global AVAILABLE
+    AVAILABLE = runcmd("listrecords available unique")
+
+
 def main():    
     global SCR, HOSTS, AVAILABLE
     SCR = curses.initscr()
@@ -185,14 +216,8 @@ def main():
 
     SCR.timeout(5000)
 
-    add_line("Loading initial host data...")
-    SCR.refresh()
-    loadhosts()
-
-    add_line("Refreshing available records...")
-    SCR.refresh()
-    AVAILABLE = runcmd("listrecords available unique")
-
+    refresh_data()
+    
     while True:
         refresh()
         header()

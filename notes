@@ -69,3 +69,4 @@
     TODO: from storm.locals import * takes about half a second!!!  Maybe find
 	  a way to speed that up, or implement an always running instance
 	  of a python-storm processquery that.
+    TOOD: allow multiple commands & the master to get around problems of slow storm loads?
