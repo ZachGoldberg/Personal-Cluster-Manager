@@ -180,6 +180,8 @@ def listrecords():
 def show_tunnel_usage():
     tunnel = AUX
     menu = MENUFACTORY.new_menu("Tunnel Usage")
+    menu.add_option_vals("Main Menu",
+                    action= lambda: change_menu('mainmenu'), hotkey="*")
     
     build_record_menu(
         menu,
@@ -191,6 +193,8 @@ def show_tunnel_usage():
 def tunnel_options():
     tunnel = AUX
     menu = MENUFACTORY.new_menu("Tunnel Options")
+    menu.add_option_vals("Main Menu",
+                    action= lambda: change_menu('mainmenu'), hotkey="*")
     menu.add_option_vals(
         "Show Tunnel Usage",
         action=lambda: change_menu('show_tunnel_usage', tunnel))
