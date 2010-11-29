@@ -74,6 +74,32 @@ def showtunnels():
     
 def showrecords():
     host = AUX
+    menu = MENUFACTORY.new_menu("Availability Records for %s" % host['name'])
+    menu.add_option_vals("Main Menu",
+                    action= lambda: change_menu('mainmenu'), hotkey="*")
+
+    for record in ALL_AVAILABLE:
+        if not str(record['hostid']) == str(host['id']):
+            continue
+
+        tunnel = TUNNELS[int(record['hostid'])]
+        value =  "%s -R %s %s, Up: %s, %s" % (
+            record['hostip'],
+#            record['hostport'],
+#            record['masterip'],
+#            record['masterport'],
+            tunnel['port'],
+            tunnel['keyfile'],
+            record['tunnelavailable'],
+            record['timestamp']
+            )
+
+        
+        menu.add_option_vals(value,
+                        action=lambda: change_menu('showrecords', host),
+                        hotkey=" ")
+
+    menu.render(SCR, add_line)
 
 def host_options():
     host = AUX
@@ -128,6 +154,7 @@ def mainmenu():
 #    raise Exception(str(menu))
     menu.render(SCR, add_line)
     
+
 def header():
     add_line("#" * 50)
     add_line("Personal Cluster Management Tool -- Curses UI %s" % datetime.now())
@@ -226,6 +253,11 @@ def refresh_data():
     SCR.refresh()
     global AVAILABLE
     AVAILABLE = runcmd("listrecords available unique")
+
+    add_line("Refreshing records...")
+    SCR.refresh()
+    global ALL_AVAILABLE
+    ALL_AVAILABLE = runcmd("listrecords")
 
 
 def main():    
