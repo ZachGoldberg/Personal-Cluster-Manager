@@ -4,7 +4,7 @@ import sys, subprocess, random, os, time, socket, optparse
 
 from common import check_output
 
-masterexec = "~/bin/python ~/pcm/src/master.py"
+masterexec = "pcmmaster"
 
 def get_key():
     return check_output("ifconfig | grep HWaddr | md5sum")[:-2]
@@ -122,6 +122,14 @@ def parse_args():
     
 
     options, _ = parser.parse_args()
+
+    file = "%s/.pcm_client_config" % os.environ['HOME']
+    if (os.path.exists(file)):
+        data = open(file).read().split('\n')
+        for line in data:
+            k, v = line.split('=')
+            if not getattr(options, k):
+                setattr(options, k, v)
 
     if not options.localuser or not options.masterkey or \
             not options.localkey or not options.masteruser or \
