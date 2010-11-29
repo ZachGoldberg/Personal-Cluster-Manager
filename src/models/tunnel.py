@@ -1,6 +1,6 @@
 from __future__ import with_statement
 import getpass, paramiko, simplejson, os
-from storm.locals import *
+from storm.properties import *
 
 from common.database import db
 

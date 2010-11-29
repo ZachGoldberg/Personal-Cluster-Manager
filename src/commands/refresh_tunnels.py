@@ -1,4 +1,3 @@
-from storm.locals import *
 from threadpool import ThreadPool, WorkRequest
 
 from common.database import db

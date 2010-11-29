@@ -1,4 +1,4 @@
-from storm.locals import *
+from storm.expr import Desc
 
 from common.database import db
 from models import AvailabilityRecord

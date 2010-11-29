@@ -2,7 +2,8 @@ from __future__ import with_statement
 import os, getpass
 from contextlib import contextmanager
 
-from storm.locals import create_database, Store
+from storm.database import create_database
+from storm.store import Store
 
 
 from common import die
