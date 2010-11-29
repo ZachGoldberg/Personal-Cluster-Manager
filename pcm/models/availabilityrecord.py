@@ -73,7 +73,7 @@ class AvailabilityRecord(object):
 
     @classmethod
     def register(clazz, host, tunnel, check=True):
-        if check:
+        if check or not getattr(tunnel, "available", None):
             tunnel.check_available()
             
         if "SSH_CONNECTION" in os.environ:
