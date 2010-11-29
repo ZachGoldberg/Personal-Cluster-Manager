@@ -56,21 +56,12 @@ def showtunnels():
     menu.add_option_vals("Main Menu",
                     action= lambda: change_menu('mainmenu'), hotkey="*")
 
-    for tunnel in TUNNELS.values():
-        if not tunnel['hostid'] == host['id']:
-            continue
-
-        menu.add_option_vals("%s: %s:%s (%s)" % (               
-                tunnel['hostid'],
-                host['name'],
-                tunnel['port'],
-                tunnel['keyfile']
-                ),
-                        action=lambda: change_menu('tunnel_options', host))
+    build_tunnel_menu(
+        menu,
+        [t for t in TUNNELS.values() if t['hostid'] == host['id']])
 
     menu.render(SCR, add_line)
-        
-        
+
     
 def showrecords():
     host = AUX
@@ -78,32 +69,12 @@ def showrecords():
     menu.add_option_vals("Main Menu",
                     action= lambda: change_menu('mainmenu'), hotkey="*")
 
-    for record in ALL_AVAILABLE:
-        if not str(record['hostid']) == str(host['id']):
-            continue
-
-        tunnel = TUNNELS[int(record['hostid'])]
-        updown = "Up"
-        if record['tunnelavailable'] == "0":
-            updown = "Down"
-
-        value =  "%s -R %s %s, %s, %s" % (
-            record['hostip'],
-#            record['hostport'],
-#            record['masterip'],
-#            record['masterport'],
-            tunnel['port'],
-            tunnel['keyfile'],
-            updown,
-            record['timestamp']
-            )
-
-        
-        menu.add_option_vals(value,
-                        action=lambda: change_menu('showrecords', host),
-                        hotkey=" ")
-
+    build_record_menu(
+        menu,
+        [r for r in ALL_AVAILABLE if str(r['hostid']) == str(host['id'])])
+    
     menu.render(SCR, add_line)
+
 
 def host_options():
     host = AUX
@@ -117,13 +88,9 @@ def host_options():
                     action=lambda: change_menu('showrecords', host))
                     
     menu.render(SCR, add_line)
-    
 
-def listtunnels():
-    menu = MENUFACTORY.new_menu("Known Tunnels")
-    menu.add_option_vals("Main Menu",
-                    action= lambda: change_menu('mainmenu'), hotkey="*")
-    for tunnel in TUNNELS.values():
+def build_tunnel_menu(menu, tunnels):
+    for tunnel in tunnels:
         host = HOSTS[tunnel['hostid']]
         menu.add_option_vals("%s: %s:%s (%s)" % (               
                 tunnel['hostid'],
@@ -132,17 +99,10 @@ def listtunnels():
                 tunnel['keyfile']
                 ),
                         action=lambda: change_menu('tunnel_options', host))
+    
 
-    menu.render(SCR, add_line)
-
-
-def listrecords():
-    menu = MENUFACTORY.new_menu("Availability Records")
-    menu.add_option_vals("Main Menu",
-                    action= lambda: change_menu('mainmenu'), hotkey="*")
-
-    for record in ALL_AVAILABLE:
-
+def build_record_menu(menu, records):
+    for record in records:
         updown = "Up"
         if record['tunnelavailable'] == "0":
             updown = "Down"
@@ -150,19 +110,31 @@ def listrecords():
         tunnel = TUNNELS[int(record['hostid'])]
         value =  "%s -R %s %s, %s, %s" % (
             record['hostip'],
-#            record['hostport'],
-#            record['masterip'],
-#            record['masterport'],
             tunnel['port'],
             tunnel['keyfile'],
             updown,
             record['timestamp']
             )
-
         
         menu.add_option_vals(value,
                         action=lambda: change_menu('showrecords', host),
                         hotkey="-")
+
+def listtunnels():
+    menu = MENUFACTORY.new_menu("Known Tunnels")
+    menu.add_option_vals("Main Menu",
+                    action= lambda: change_menu('mainmenu'), hotkey="*")
+
+    build_tunnel_menu(menu, TUNNELS.values())
+
+    menu.render(SCR, add_line)
+
+def listrecords():
+    menu = MENUFACTORY.new_menu("Availability Records")
+    menu.add_option_vals("Main Menu",
+                    action= lambda: change_menu('mainmenu'), hotkey="*")
+
+    build_record_menu(menu, ALL_AVAILABLE)
 
     menu.render(SCR, add_line)
 
