@@ -139,11 +139,26 @@ def listrecords():
     menu.render(SCR, add_line)
 
 
+def show_tunnel_usage():
+    tunnel = AUX
+    menu = MENUFACTORY.new_menu("Tunnel Usage")
+    
+    build_record_menu(
+        menu,
+        [r for r in ALL_AVAILABLE if str(r['tunnelid']) == str(tunnel['id'])])
+
+    menu.render(SCR, add_line)
+        
+
 def tunnel_options():
-    """
-    show when this tunnel was used
-    """
-    pass
+    tunnel = AUX
+    menu = MENUFACTORY.new_menu("Tunnel Options")
+    menu.add_option_vals(
+        "Show Tunnel Usage",
+        action=lambda: change_menu('show_tunnel_usage', tunnel))
+        
+    menu.render(SCR, add_line)
+
 
 def change_menu(newmenu, aux=None):
     global CURRENT_LOC, AUX
