@@ -26,7 +26,7 @@ class Menu(object):
                    'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
                    'u', 'v', 'w', 'x', 'y', 'z']
         hotkeys.reverse()
-        for option in self.options[:10]:
+        for option in self.options[:20]:
             if not option.hotkey:
                 option.hotkey = hotkeys.pop()
             if not option.hidden:
