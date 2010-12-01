@@ -8,7 +8,10 @@ if __name__ == '__main__':
     if (os.path.exists(file)):
         filedata = open(file).read().split('\n')
         for line in filedata:
-            k, v = line.split('=')
+            try:
+                k, v = line.split('=')
+            except:
+                continue
             data[k] = v
 
     questions = [
@@ -16,7 +19,7 @@ if __name__ == '__main__':
         ("masteruser", getpass.getuser(), 
          "What is your username on the PCM master?"),     
         ("masterport", 22, 
-         "On what port does PCM run on the PCM master?"),
+         "On what port does SSH run on the PCM master?"),
         ("masterkey", "~/.ssh/id_rsa",
          "What SSH Private Key on the local machine can we use to"
          "login to the PCM master?"),
