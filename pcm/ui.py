@@ -3,6 +3,7 @@ import curses, subprocess, os, simplejson
 from datetime import datetime
 
 from pcm.common.menu import MenuFactory, MenuOption
+from pcm.plugins import plugin_main_menu_options, init_plugins
 
 # NOTES:
 # The UI really should *never* be tied to any kind of legwork,
@@ -218,7 +219,10 @@ def mainmenu():
                     action=lambda: change_menu('listrecords'))
 
     menu.add_option_vals("Refresh Active Hosts", action=refresh_hosts)
-#    raise Exception(str(menu))
+
+    # Let the plugins add what they need to the main menu
+    plugin_main_menu_options(menu)
+	
     menu.render(SCR, add_line)
     
 
@@ -335,7 +339,10 @@ def main():
     SCR.timeout(5000)
 
     refresh_data()
-    
+
+    # Todo: cache and reload data here.
+    init_plugins({})
+
     while True:
         refresh()
         header()
