@@ -51,7 +51,7 @@ class Database(object):
         self.store = Store(self.db)
         self.commit_count = 0
 
-    def __create_table(self, name, types):
+    def _create_table(self, name, types):
         self.store.execute("CREATE TABLE %s %s" % (name,
                            "( %s )" % ', '.join(types)))
 
@@ -68,12 +68,15 @@ class Database(object):
         os.chmod(DB_LOC, 0666)
         os.chmod(os.path.dirname(DB_LOC), 0777)
         with self.transaction():
-            self.__create_table("host", [
+            from pcm.plugins import create_tables
+            create_tables(self)
+
+            self._create_table("host", [
                     "id INTEGER PRIMARY KEY",
                     "name VARCHAR",
                     "uniquetoken VARCHAR"
                     ])
-            self.__create_table("availability_record", [
+            self._create_table("availability_record", [
                     "id INTEGER PRIMARY KEY",
                     "hostid INTEGER",
                     "hostip VARCHAR",
@@ -84,12 +87,12 @@ class Database(object):
                     "tunnelavailable INTEGER",
                     "timestamp DATETIME"
                     ])
-            self.__create_table("tunnel", [
+            self._create_table("tunnel", [
                     "id INTEGER PRIMARY KEY",
                     "port INTEGER",
                     "user VARCHAR",
                     "hostid INTEGER",
                     "keyfile VARCHAR"
                     ])
-
+            
 db = Database()

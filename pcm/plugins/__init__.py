@@ -19,8 +19,16 @@ def init_plugins(plugindata):
         PLUGINS.append(cls(plugindata.get(str(cls), None)))
         
     for cls in BACKEND_PLUGINS:
-        BK_PLUGINS.append(cls(plugindata.get(str(cls), None)))
+        BK_PLUGINS.append(cls())
 
+
+def create_tables(database):
+    if not BK_PLUGINS:
+        init_plugins({})
+
+    for plugin in BK_PLUGINS:
+        plugin.create_tables(database)
+    
 
 def get_plugin_command(cmd):
     if not BK_PLUGINS:

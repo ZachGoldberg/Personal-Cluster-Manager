@@ -1,14 +1,20 @@
 class BackendPlugin(object):
-    def __init__(self, initialdata):
+    def __init__(self):
         """
         Initialize this plugin with the passed in initialdata packet
         """
-        self.data = initialdata
+        pass
 
     def fetch_data(self):
         """
         Called periodically by the UI to refresh this plugin's
         internal datastructure.
+        """
+        pass
+
+    def create_tables(self, db):
+        """
+        Initialize the needed backend tables for this plugin.
         """
         pass
 
@@ -19,6 +25,7 @@ class BackendPlugin(object):
         function names to callables
         """
         return {}
+
 
 class UIPlugin(object):
     def __init__(self, initialdata):
