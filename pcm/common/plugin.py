@@ -15,9 +15,10 @@ class BackendPlugin(object):
     def get_commands(self):
         """
         Called by master.py to see if the plugin offers any
-        non-standard commands
+        non-standard commands.  Returns a mapping of 
+        function names to callables
         """
-        pass
+        return {}
 
 class UIPlugin(object):
     def __init__(self, initialdata):

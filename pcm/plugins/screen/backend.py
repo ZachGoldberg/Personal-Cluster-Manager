@@ -1,4 +1,9 @@
 from pcm.common.plugin import BackendPlugin
 
 class ScreenBackend(BackendPlugin):
-    pass
+
+    def showscreens(self, args):
+        print args
+
+    def get_commands(self):
+        return {'showscreens': self.showscreens}
