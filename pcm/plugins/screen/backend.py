@@ -41,3 +41,6 @@ class ScreenBackend(BackendPlugin):
     def get_commands(self):
         return {'listscreens': self.listscreens}
 
+
+    def fetch_data(self):
+        pass
