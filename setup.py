@@ -10,7 +10,8 @@ setup(
     license = "GPL",
     keywords = "ssh management cluster personal openssh",
     url = "http://packages.python.org/unix_pcm",
-    packages=['pcm', 'pcm/models', 'pcm/common', 'pcm/commands'],
+    packages=['pcm', 'pcm/models', 'pcm/common', 'pcm/commands',
+              'pcm/plugins', 'pcm/plugins/screen'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
