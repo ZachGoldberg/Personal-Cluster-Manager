@@ -65,8 +65,8 @@ class Database(object):
         
         # Let others write to the DB... remember we're assuming
         # that we trust these clients, so this is OK.
-        os.chmod(DB_LOC, 0666)
-        os.chmod(os.path.dirname(DB_LOC), 0777)
+        #os.chmod(DB_LOC, 0666)
+        #os.chmod(os.path.dirname(DB_LOC), 0777)
         with self.transaction():
             from pcm.plugins import create_tables
             create_tables(self)
