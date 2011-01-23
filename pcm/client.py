@@ -28,7 +28,7 @@ def get_tunnel_port(keyfile, masterport, masteruser, masterhost):
             tunnelport = 20000 + int(10000*random.random())
         print "Testing port %s" % tunnelport
         data = check_output(
-            "ssh %s -p %s %s@%s 'netstat -lnp 2>/dev/null| grep %s'" % (
+            "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null %s -p %s %s@%s 'netstat -lnp 2>/dev/null| grep %s'" % (
                 keyfile,
                 masterport,
                 masteruser,
