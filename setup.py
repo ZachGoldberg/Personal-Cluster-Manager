@@ -20,8 +20,9 @@ setup(
     ],
     entry_points = {
         "console_scripts": [
-            "pcm_client = pcm.client:run",
             "pcm_master = pcm.master:run",
+            "pcm_client = pcm.client:run",
+            "pcm_client_config = pcm.pcm_client_config:run",
             "pcm_ui = pcm.ui:run",
             ],
         },
@@ -46,6 +47,7 @@ setup(
     entry_points = {
         "console_scripts": [
             "pcm_client = pcm.client:run",
+            "pcm_client_config = pcm.pcm_client_config:run",
             ],
         },
     

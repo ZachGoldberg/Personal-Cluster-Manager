@@ -2,7 +2,7 @@
 import getpass, sys, os
 
 
-if __name__ == '__main__':
+def run():
     data = {}
     file = "%s/.pcm_client_config" % os.environ['HOME']
     if (os.path.exists(file)):
@@ -51,3 +51,6 @@ if __name__ == '__main__':
     f = open(file, 'w')
     f.write(output)
     f.close()
+
+if __name__ == '__main__':
+    run()
