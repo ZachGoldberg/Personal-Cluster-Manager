@@ -38,15 +38,15 @@ case "$1" in
 		usage
 	fi
 	log_begin_msg "Starting Personal Cluster Management Client"
-	start-stop-daemon -b --start --exec $PROGRAM --user $2 >> /var/log/pcm_client 2>&1 
+	start-stop-daemon -b --start --exec $PROGRAM --user $2 --pidfile=/var/spool/pcm.pid >> /var/log/pcm_client 2>&1 
 	log_end_msg 0
 	;;
   stop)
-	pkill -9 -f pcm_client
+	start-stop-daemon --stop --pidfile=/var/spool/pcm.pid >> /var/log/pcm_client
 	;;
   force-reload|restart)
-	stop
-	$0 start
+	$0 stop 
+	$0 start $2
 	;;
   *)
 	usage
