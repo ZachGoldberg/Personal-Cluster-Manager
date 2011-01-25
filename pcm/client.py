@@ -81,7 +81,7 @@ def main(options):
         print "Identifying to master"
         print cmd
         os.system(cmd)
-        sshcmd = "%s -N" % sshcmd
+        sshcmd = "%s -o ServerAliveInterval=10 -o TCPKeepAlive=yes -N" % sshcmd
         os.system(sshcmd)
         time.sleep(5)
 
