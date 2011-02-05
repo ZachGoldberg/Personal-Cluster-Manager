@@ -1,8 +1,11 @@
 from pcm.plugins.screen.ui import ScreenUI
 from pcm.plugins.screen.backend import ScreenBackend
+from pcm.plugins.filetransfer.ui import FileTransferUI
+
 
 UI_PLUGINS = [
-    ScreenUI
+    ScreenUI,
+    FileTransferUI
     ]
 
 BACKEND_PLUGINS = [
@@ -13,10 +16,10 @@ PLUGINS = []
 BK_PLUGINS = []
 CMDS = {}
 
-def init_plugins(plugindata):
+def init_plugins(plugindata, change_menu):
     global PLUGINS, BK_PLUGINS
     for cls in UI_PLUGINS:
-        PLUGINS.append(cls(plugindata.get(str(cls), None)))
+        PLUGINS.append(cls(plugindata, change_menu))
         
     for cls in BACKEND_PLUGINS:
         BK_PLUGINS.append(cls())
@@ -41,6 +44,9 @@ def get_plugin_command(cmd):
 
 def plugin_main_menu_options(menu):
     [plugin.register_main_menu(menu) for plugin in PLUGINS]
+
+def plugin_host_menu_options(menu, host):
+    [plugin.register_host_menu(menu, host) for plugin in PLUGINS]
 
 if __name__ == '__main__':
     init_plugins({})

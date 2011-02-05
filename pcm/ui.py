@@ -3,9 +3,11 @@ import curses, subprocess, os, simplejson
 from datetime import datetime
 
 from pcm.common.menu import MenuFactory, MenuOption
-from pcm.plugins import plugin_main_menu_options, init_plugins
+from pcm.plugins import plugin_main_menu_options, init_plugins, \
+    plugin_host_menu_options
 
-# NOTES:
+
+# NOTE:
 # The UI really should *never* be tied to any kind of legwork,
 # like refreshing the backend etc.  It should be a dumb client
 # ontop of the backend.  On initial load we shouldnt need to
@@ -126,6 +128,10 @@ def host_options():
     menu.add_option_vals("Show all associated tunnel activity", 
                     action=lambda: change_menu('showrecords', host))
                     
+
+    # Let the plugins add what they need to the host menu
+    plugin_host_menu_options(menu, host)
+
     menu.render(SCR, add_line)
 
 def build_tunnel_menu(menu, tunnels):
@@ -341,7 +347,9 @@ def main():
     refresh_data()
 
     # Todo: cache and reload data here.
-    init_plugins({})
+    init_plugins({'TUNNELS': TUNNELS,
+                  'AVAILABLE': AVAILABLE,
+                  'HOSTS': HOSTS}, change_menu)
 
     while True:
         refresh()

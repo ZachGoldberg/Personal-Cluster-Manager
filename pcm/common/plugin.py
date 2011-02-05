@@ -28,11 +28,12 @@ class BackendPlugin(object):
 
 
 class UIPlugin(object):
-    def __init__(self, initialdata):
+    def __init__(self, initialdata, change_menu):
         """
         Initialize this plugin with the passed in initialdata packet
         """
         self.data = initialdata
+        self.change_menu = change_menu
 
     def register_main_menu(self, menu):
         """
