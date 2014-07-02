@@ -12,7 +12,8 @@ setup(
     keywords = "ssh management cluster personal openssh",
     url = "http://packages.python.org/unix_pcm",
     packages=['pcm', 'pcm/models', 'pcm/common', 'pcm/commands',
-              'pcm/plugins', 'pcm/plugins/screen'],
+              'pcm/plugins', 'pcm/plugins/screen',
+              'pcm/plugins/filetransfer'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
